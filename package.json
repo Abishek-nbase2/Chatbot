@@ -7,14 +7,20 @@
   "scripts": {
     "dev:react": "vite",
     "dev:electron": "npm run transpile && electron .",
+    "dev:full": "concurrently \"npm run dev:react\" \"npm run dev:electron\"",
+    "start:backend": "python backend/main.py",
+    "setup:data": "python setup_data.py",
     "transpile": "tsc --project ./src/Electron/tsconfig.json && tsc --project ./src/Electron/tsconfig.preload.json",
     "build": "tsc -b && vite build",
+    "build:electron": "npm run build && npm run transpile",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.14",
+    "axios": "^1.12.2",
     "electron": "^38.2.1",
+    "lucide-react": "^0.545.0",
     "path": "^0.12.7",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
@@ -26,6 +32,7 @@
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react": "^4.4.1",
+    "concurrently": "^9.2.1",
     "eslint": "^9.25.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
