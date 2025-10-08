@@ -104,7 +104,7 @@ def setup_gemini(api_key: str):
     global gemini_model
     try:
         genai.configure(api_key=api_key)
-        gemini_model = genai.GenerativeModel('gemini-1.5-flash')
+        gemini_model = genai.GenerativeModel('gemini-2.5-pro')
         logger.info("Gemini API configured successfully")
         return True
     except Exception as e:
