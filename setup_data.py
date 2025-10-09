@@ -96,13 +96,23 @@ if __name__ == "__main__":
     if not clear_collection():
         print("⚠️ Failed to clear collection, but continuing anyway...")
     
-    # Load the TAS2781 document
-    print("\n📚 Loading TAS2781 document...")
-    tas_file = "./tas2781.md"
-    if Path(tas_file).exists():
-        load_document_to_backend(tas_file)
-    else:
-        print(f"❌ File {tas_file} not found in current directory")
+    # Load multiple documents
+    documents_to_load = [
+        "./tas2781.md",
+        "./tas2783.md",
+        "./userguide.md"
+    ]
+    
+    successful_loads = 0
+    for doc_file in documents_to_load:
+        print(f"\n📚 Loading {Path(doc_file).name}...")
+        if Path(doc_file).exists():
+            if load_document_to_backend(doc_file):
+                successful_loads += 1
+        else:
+            print(f"❌ File {doc_file} not found in current directory")
+    
+    print(f"\n✅ Successfully loaded {successful_loads} out of {len(documents_to_load)} documents")
     
     # Show collection stats
     try:
