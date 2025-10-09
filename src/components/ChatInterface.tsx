@@ -1,5 +1,9 @@
 import { useState, useRef, useEffect } from 'react'
 import { Send, Bot, User, FileText, Loader2 } from 'lucide-react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import rehypeHighlight from 'rehype-highlight'
+import 'highlight.js/styles/github.css'
 
 interface Message {
   id: string
@@ -28,7 +32,7 @@ const ChatInterface: React.FC = () => {
       {
         id: '1',
         type: 'assistant',
-        content: 'Hello! I\'m your AI assistant. I can help you answer questions about the documents that have been uploaded to the system. What would you like to know?',
+        content: 'Hello! I\'m your AI assistant.How can I help you?',
         timestamp: new Date(),
       },
     ])
@@ -123,12 +127,6 @@ const ChatInterface: React.FC = () => {
             <Bot className="w-6 h-6 text-blue-600 mr-2" />
             <h2 className="text-lg font-semibold text-gray-800">AI Assistant</h2>
           </div>
-          {collectionStats && (
-            <div className="flex items-center text-sm text-gray-600">
-              <FileText className="w-4 h-4 mr-1" />
-              <span>{collectionStats.total_chunks} chunks loaded</span>
-            </div>
-          )}
         </div>
       </div>
 
@@ -151,10 +149,110 @@ const ChatInterface: React.FC = () => {
                   <Bot className="w-5 h-5 mr-2 mt-0.5 text-blue-600" />
                 )}
                 <div className="flex-1">
-                  <div className="whitespace-pre-wrap">{message.content}</div>
+                  {message.type === 'assistant' ? (
+                    <div className="prose prose-sm max-w-none">
+                      <ReactMarkdown 
+                        remarkPlugins={[remarkGfm]}
+                        rehypePlugins={[rehypeHighlight]}
+                        components={{
+                          table: ({children}) => (
+                            <table className="min-w-full border-collapse border border-gray-300 my-4">
+                              {children}
+                            </table>
+                          ),
+                          thead: ({children}) => (
+                            <thead className="bg-gray-50">
+                              {children}
+                            </thead>
+                          ),
+                          th: ({children}) => (
+                            <th className="border border-gray-300 px-4 py-2 text-left font-semibold text-gray-700">
+                              {children}
+                            </th>
+                          ),
+                          td: ({children}) => (
+                            <td className="border border-gray-300 px-4 py-2">
+                              {children}
+                            </td>
+                          ),
+                          code: ({children, ...props}: any) => {
+                            const inline = !String(props.className).includes('language-')
+                            return inline ? (
+                              <code className="bg-gray-100 px-1 py-0.5 rounded text-sm font-mono text-blue-600">
+                                {children}
+                              </code>
+                            ) : (
+                              <code className="block bg-gray-100 p-3 rounded-lg overflow-x-auto text-sm font-mono">
+                                {children}
+                              </code>
+                            )
+                          },
+                          pre: ({children}) => (
+                            <pre className="bg-gray-100 p-3 rounded-lg overflow-x-auto">
+                              {children}
+                            </pre>
+                          ),
+                          blockquote: ({children}) => (
+                            <blockquote className="border-l-4 border-blue-500 pl-4 italic text-gray-600">
+                              {children}
+                            </blockquote>
+                          ),
+                          h1: ({children}) => (
+                            <h1 className="text-xl font-bold text-gray-800 mt-4 mb-2">
+                              {children}
+                            </h1>
+                          ),
+                          h2: ({children}) => (
+                            <h2 className="text-lg font-bold text-gray-800 mt-3 mb-2">
+                              {children}
+                            </h2>
+                          ),
+                          h3: ({children}) => (
+                            <h3 className="text-base font-bold text-gray-800 mt-2 mb-1">
+                              {children}
+                            </h3>
+                          ),
+                          ul: ({children}) => (
+                            <ul className="list-disc list-inside my-2 space-y-1">
+                              {children}
+                            </ul>
+                          ),
+                          ol: ({children}) => (
+                            <ol className="list-decimal list-inside my-2 space-y-1">
+                              {children}
+                            </ol>
+                          ),
+                          li: ({children}) => (
+                            <li className="text-gray-700">
+                              {children}
+                            </li>
+                          ),
+                          strong: ({children}) => (
+                            <strong className="font-bold text-gray-800">
+                              {children}
+                            </strong>
+                          ),
+                          em: ({children}) => (
+                            <em className="italic text-gray-700">
+                              {children}
+                            </em>
+                          ),
+                          p: ({children}) => (
+                            <p className="mb-2 text-gray-700 leading-relaxed">
+                              {children}
+                            </p>
+                          ),
+                        }}
+                      >
+                        {message.content}
+                      </ReactMarkdown>
+                    </div>
+                  ) : (
+                    <div className="whitespace-pre-wrap">{message.content}</div>
+                  )}
                   
                   {/* Sources */}
-                  {message.sources && message.sources.length > 0 && (
+                  {/* {message.sources && message.sources.length > 0 && (
                     <div className="mt-3 pt-3 border-t border-gray-200">
                       <div className="text-xs font-semibold text-gray-600 mb-2">
                         Sources:
@@ -178,7 +276,7 @@ const ChatInterface: React.FC = () => {
                         ))}
                       </div>
                     </div>
-                  )}
+                  )} */}
                 </div>
                 {message.type === 'user' && (
                   <User className="w-5 h-5 ml-2 mt-0.5" />
@@ -210,7 +308,7 @@ const ChatInterface: React.FC = () => {
             type="text"
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
-            placeholder="Ask me anything about your documents..."
+            placeholder="Ask anything..."
             className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             disabled={isLoading}
           />

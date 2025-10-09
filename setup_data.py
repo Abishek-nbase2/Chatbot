@@ -41,6 +41,21 @@ def load_document_to_backend(file_path: str, backend_url: str = "http://localhos
         print(f"❌ Error loading document: {e}")
         return False
 
+def clear_collection(backend_url: str = "http://localhost:8000"):
+    """Clear existing collection before loading new data"""
+    try:
+        response = requests.delete(f"{backend_url}/clear-collection")
+        response.raise_for_status()
+        result = response.json()
+        print(f"✅ {result['message']}")
+        return True
+    except requests.exceptions.ConnectionError:
+        print("❌ Could not connect to backend. Make sure the FastAPI server is running on http://localhost:8000")
+        return False
+    except Exception as e:
+        print(f"❌ Error clearing collection: {e}")
+        return False
+
 def configure_gemini_api(api_key: str, backend_url: str = "http://localhost:8000"):
     """Configure Gemini API key in the backend"""
     try:
@@ -76,9 +91,14 @@ if __name__ == "__main__":
     else:
         print("⚠️  Skipping Gemini configuration. You can configure it later.")
     
+    # Clear existing collection first
+    print("\n🗑️ Clearing existing collection...")
+    if not clear_collection():
+        print("⚠️ Failed to clear collection, but continuing anyway...")
+    
     # Load the TAS2781 document
     print("\n📚 Loading TAS2781 document...")
-    tas_file = "tas2781.md"
+    tas_file = "./tas2781.md"
     if Path(tas_file).exists():
         load_document_to_backend(tas_file)
     else:

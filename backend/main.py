@@ -71,7 +71,7 @@ async def lifespan(app: FastAPI):
     # Shutdown
     logger.info("Shutting down...")
 
-app = FastAPI(title="NotebookLM-like Chatbot API", version="1.0.0", lifespan=lifespan)
+app = FastAPI(title="Chatbot API", version="1.0.0", lifespan=lifespan)
 
 # CORS middleware
 app.add_middleware(
@@ -273,6 +273,23 @@ Instructions:
 - Be precise and cite specific information from the context when possible
 - Maintain a helpful and conversational tone
 - If asked about technical specifications, provide exact values and details from the context
+
+FORMATTING GUIDELINES:
+- Use markdown formatting for better readability
+- Present tabular data using proper markdown tables with | separators
+- Use **bold** for important terms and values
+- Use `code formatting` for technical terms, formulas, and specific values
+- Use bullet points (-) for lists
+- Use numbered lists (1., 2., 3.) for sequential steps or procedures
+- Use ## headings for major sections when organizing complex information
+- For mathematical formulas, present them clearly with proper formatting
+- When presenting multiple related pieces of information, organize them in a structured format
+
+Example table format:
+| Parameter | Value | Description |
+|-----------|--------|-------------|
+| Frequency | 800 Hz | Beep frequency |
+| Input | 3.2 kHz | PWM signal |
 
 Answer:"""
 
